@@ -24,17 +24,27 @@
 
 ## 开发环境运行
 
-确保您已安装Node.js (推荐v16+)：
+本项目使用pnpm作为包管理器。确保您已安装Node.js (推荐v18+)和pnpm：
 
 ```bash
+# 安装pnpm
+npm install -g pnpm
+
 # 安装依赖
-npm install
+pnpm install
 
 # 启动开发服务器
-npm start
+pnpm start
 ```
 
 应用将在 http://localhost:3000 运行。
+
+### 为什么使用pnpm
+
+- 磁盘空间效率更高，通过硬链接共享依赖
+- 安装速度更快
+- 依赖管理更严格安全
+- 支持monorepo工作空间
 
 ## 使用Docker部署
 
