@@ -81,12 +81,24 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     
     steps:
+    - name: 检查SSH密钥格式
+      run: |
+        echo "检查SSH密钥格式..."
+        # 不显示密钥内容，只检查其格式和长度
+        echo "${{ secrets.DEPLOY_SSH_KEY }}" | wc -l
+        echo "密钥开头几个字符: "
+        echo "${{ secrets.DEPLOY_SSH_KEY }}" | head -c 10
+        
     - name: 部署到服务器
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DEPLOY_HOST }}
         username: ${{ secrets.DEPLOY_USERNAME }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
+        port: 22
+        timeout: 60s
+        command_timeout: 30m
+        debug: true
         script: |
           # 设置应用目录变量
           APP_DIR="/opt/frontend"
