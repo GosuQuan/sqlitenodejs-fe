@@ -5,8 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:
-    # 允许手动触发工作流
+  workflow_dispatch: # 允许手动触发工作流
 
 jobs:
   build-and-test:
@@ -14,10 +13,10 @@ jobs:
     
     steps:
     - name: 检出代码
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: 设置Node.js环境
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
@@ -32,10 +31,11 @@ jobs:
       run: npm run build
       
     - name: 上传构建产物
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build
         path: build
+        retention-days: 1 # 只保留一天，减少存储使用
 
   docker-build-and-push:
     needs: build-and-test
@@ -44,25 +44,25 @@ jobs:
     
     steps:
     - name: 检出代码
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: 下载构建产物
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: build
         path: build
         
     - name: 登录Docker Hub
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
         
     - name: 设置Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
       
-    - name: u6784u5efau5e76u63a8u9001Dockeru955cu50cf
-      uses: docker/build-push-action@v4
+    - name: 构建并推送Docker镜像
+      uses: docker/build-push-action@v5
       with:
         context: .
         push: true
@@ -77,43 +77,79 @@ jobs:
     
     steps:
     - name: 部署到服务器
-      # 使用SSH部署到已有后端服务的服务器
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DEPLOY_HOST }}
         username: ${{ secrets.DEPLOY_USERNAME }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
         script: |
-          # 创建前端应用部署目录（如果不存在）
-          mkdir -p /path/to/frontend
-          cd /path/to/frontend
+          # 设置应用目录变量
+          APP_DIR="/opt/frontend"
           
-          # 保存当前的docker-compose.yml文件（如果存在）
+          # 创建前端应用部署目录（如果不存在）
+          mkdir -p $APP_DIR
+          cd $APP_DIR
+          
+          echo "===== 开始部署前端应用 ====="
+          
+          # 备份当前配置（如果存在）
           if [ -f docker-compose.yml ]; then
-            cp docker-compose.yml docker-compose.yml.backup
+            echo "备份现有配置..."
+            cp docker-compose.yml docker-compose.yml.backup.$(date +%Y%m%d%H%M%S)
           fi
           
           # 创建新的docker-compose.yml文件
+          echo "创建docker-compose配置..."
           cat > docker-compose.yml << 'EOL'
           version: '3.8'
           
           services:
             react-app:
               image: ${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:latest
+              container_name: frontend-react
               ports:
                 - "3000:80"
               restart: unless-stopped
               healthcheck:
-                test: ["CMD", "curl", "-f", "http://localhost"]
+                test: ["CMD", "curl", "-f", "http://localhost/health"]
                 interval: 30s
                 timeout: 10s
                 retries: 3
                 start_period: 40s
+              # 添加日志配置
+              logging:
+                driver: "json-file"
+                options:
+                  max-size: "10m"
+                  max-file: "3"
           EOL
           
-          # 拉取最新镜像并启动/重启容器
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:latest
-          docker-compose down
-          docker-compose up -d
+          # 拉取最新镜像
+          echo "拉取最新Docker镜像..."
+          if ! docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:latest; then
+            echo "错误: 无法拉取Docker镜像，请检查凭证和网络连接"
+            exit 1
+          fi
           
-          echo "前端应用已成功部署到端口3000"
+          # 停止并删除现有容器
+          echo "停止现有容器..."
+          docker-compose down || true
+          
+          # 启动新容器
+          echo "启动应用容器..."
+          if docker-compose up -d; then
+            echo "✅ 前端应用已成功部署到端口3000"
+            
+            # 验证应用是否正常运行
+            echo "验证应用状态..."
+            sleep 10
+            if curl -s http://localhost:3000/health | grep -q "healthy"; then
+              echo "✅ 健康检查通过: 应用正常运行"
+            else
+              echo "⚠️ 警告: 应用已部署但健康检查未通过，请检查日志"
+              docker-compose logs
+            fi
+          else
+            echo "❌ 错误: 容器启动失败"
+            exit 1
+          fi
