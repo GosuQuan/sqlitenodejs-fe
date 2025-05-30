@@ -1,0 +1,57 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  react:
+    specifier: ^18.2.0
+    version: 18.2.0
+  react-dom:
+    specifier: ^18.2.0
+    version: 18.2.0(react@18.2.0)
+  react-router-dom:
+    specifier: ^6.11.0
+    version: 6.11.0(react-dom@18.2.0)(react@18.2.0)
+  react-scripts:
+    specifier: 5.0.1
+    version: 5.0.1
+  web-vitals:
+    specifier: ^2.1.4
+    version: 2.1.4
+
+packages:
+  /react-dom@18.2.0(react@18.2.0):
+    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
+    peerDependencies:
+      react: ^18.2.0
+    dependencies:
+      loose-envify: ^1.1.0
+      react: 18.2.0
+      scheduler: ^0.23.0
+    dev: false
+
+  /react-router-dom@6.11.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Q3mZN3cGUFgDrQnwSj4dYk9g4xNPnKcdVnGAMS1rRJmSlCKFpwT7aPmHQkIzHWGmLQgz0xPuGDbVb4ZSuMGoKw==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    dependencies:
+      '@remix-run/router': ^1.6.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-router: $react-router
+    dev: false
+
+  /react@18.2.0:
+    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      loose-envify: ^1.1.0
+    dev: false
+
+  /web-vitals@2.1.4:
+    resolution: {integrity: sha512-sVWcwhU5mX6crfI5Vd2dC4qchyTqxV8URinzt25XqVh+bHEPGH4C3NPrNionCP7Obx59wrYEbNlw4Z8sjALzZg==}
+    dev: false
