@@ -2,6 +2,10 @@
 /node_modules
 /.pnp
 .pnp.js
+.pnpm-store/
+
+# pnpm
+.pnpm-debug.log*
 
 # 测试
 /coverage
