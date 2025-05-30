@@ -77,15 +77,43 @@ jobs:
     
     steps:
     - name: 部署到服务器
-      # 可以使用SSH部署到你的服务器，或者使用其他SSH服务
-      # 以下是一个使用SSH部署到服务器的示例
+      # 使用SSH部署到已有后端服务的服务器
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.DEPLOY_HOST }}
         username: ${{ secrets.DEPLOY_USERNAME }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
         script: |
-          cd /path/to/deployment
-          docker-compose down
+          # 创建前端应用部署目录（如果不存在）
+          mkdir -p /path/to/frontend
+          cd /path/to/frontend
+          
+          # 保存当前的docker-compose.yml文件（如果存在）
+          if [ -f docker-compose.yml ]; then
+            cp docker-compose.yml docker-compose.yml.backup
+          fi
+          
+          # 创建新的docker-compose.yml文件
+          cat > docker-compose.yml << 'EOL'
+          version: '3.8'
+          
+          services:
+            react-app:
+              image: ${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:latest
+              ports:
+                - "3000:80"
+              restart: unless-stopped
+              healthcheck:
+                test: ["CMD", "curl", "-f", "http://localhost"]
+                interval: 30s
+                timeout: 10s
+                retries: 3
+                start_period: 40s
+          EOL
+          
+          # 拉取最新镜像并启动/重启容器
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:latest
+          docker-compose down
           docker-compose up -d
+          
+          echo "前端应用已成功部署到端口3000"

@@ -38,14 +38,14 @@ npm start
 
 ## 使用Docker部署
 
-### 构建并运行Docker容器
+### 在本地构建并运行Docker容器
 
 ```bash
 # 使用Docker Compose构建并启动
 docker-compose up -d
 ```
 
-应用将在 http://localhost 运行。
+应用将在 http://localhost:3000 运行。
 
 ### 单独使用Dockerfile
 
@@ -54,8 +54,31 @@ docker-compose up -d
 docker build -t react-docker-app .
 
 # 运行容器
-docker run -p 80:80 -d react-docker-app
+docker run -p 3000:80 -d react-docker-app
 ```
+
+### 在已有后端服务的云主机上部署
+
+本项目配置为可以与现有后端服务共存于同一台云主机上。前端应用将通过3000端口访问，而不会干扰后端服务。
+
+1. CI/CD自动部署：
+   - 项目包含GitHub Actions工作流配置，可自动构建并部署到云主机
+   - 部署脚本会自动创建独立的前端应用目录并配置Docker
+   - 前端应用将在云主机的3000端口上运行
+
+2. 手动部署：
+   ```bash
+   # 在服务器上创建前端应用目录
+   mkdir -p /path/to/frontend
+   cd /path/to/frontend
+   
+   # 创建docker-compose.yml文件
+   # 文件内容见项目中的docker-compose.yml
+   
+   # 拉取并运行Docker镜像
+   docker pull yourusername/react-docker-app:latest
+   docker-compose up -d
+   ```
 
 ## 功能特点
 

@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "3000:80"
     restart: unless-stopped
-    # u53efu9009u7684u5065u5eb7u68c0u67e5
+    # 可选的健康检查
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s
