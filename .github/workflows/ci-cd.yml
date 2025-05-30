@@ -1,0 +1,91 @@
+name: React Docker App CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    # 允许手动触发工作流
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置Node.js环境
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 安装依赖
+      run: npm ci
+      
+    - name: 运行测试
+      run: npm test -- --passWithNoTests
+      
+    - name: 构建应用
+      run: npm run build
+      
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v3
+      with:
+        name: build
+        path: build
+
+  docker-build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 下载构建产物
+      uses: actions/download-artifact@v3
+      with:
+        name: build
+        path: build
+        
+    - name: 登录Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        
+    - name: 设置Docker Buildx
+      uses: docker/setup-buildx-action@v2
+      
+    - name: u6784u5efau5e76u63a8u9001Dockeru955cu50cf
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:latest,${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:${{ github.sha }}
+        cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:buildcache
+        cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:buildcache,mode=max
+
+  deploy:
+    needs: docker-build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: 部署到服务器
+      # 可以使用SSH部署到你的服务器，或者使用其他SSH服务
+      # 以下是一个使用SSH部署到服务器的示例
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        username: ${{ secrets.DEPLOY_USERNAME }}
+        key: ${{ secrets.DEPLOY_SSH_KEY }}
+        script: |
+          cd /path/to/deployment
+          docker-compose down
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/react-docker-app:latest
+          docker-compose up -d
