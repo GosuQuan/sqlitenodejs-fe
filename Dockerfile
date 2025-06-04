@@ -19,6 +19,9 @@ ENV PATH=$PATH:$PNPM_HOME
 RUN pnpm config set store-dir /root/.pnpm-store
 RUN pnpm install
 
+# 添加构建参数，用于破坏缓存
+ARG CACHEBUST=1
+
 # 复制项目文件
 COPY . .
 
