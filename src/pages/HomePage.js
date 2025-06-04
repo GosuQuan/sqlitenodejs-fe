@@ -1,25 +1,77 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function HomePage() {
+  const [loaded, setLoaded] = useState(false);
+  const title = "CYBER FUTURE";
+
+  useEffect(() => {
+    // Simulate loading time for animation effect
+    const timer = setTimeout(() => {
+      setLoaded(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="landing-page">
-      <div className="container">
-        <h1>u6b22u8fceu6765u5230React Dockeru5e94u7528</h1>
-        <p>
-          u8fd9u662fu4e00u4e2au4f7fu7528Reactu6784u5efau5e76u652fu6301Dockeru5bb9u5668u5316u90e8u7f72u7684u73b0u4ee3u5316Webu5e94u7528u3002
-          u6211u4eecu63d0u4f9bu7b80u6d01u3001u9ad8u6548u7684u7528u6237u754cu9762u548cu51fau8272u7684u529fu80fdu3002
-        </p>
-        <p>
-          u4f7fu7528u6700u65b0u7684u524du7aefu6280u672fu6808uff0cu5305u62ecReact 18u3001React Routeru548cu73b0u4ee3CSSu6837u5f0fu3002
-          u6211u4eecu7684u5e94u7528u53efu4ee5u901au8fc7Dockeru8fdbu884cu5bb9u5668u5316u90e8u7f72uff0cu5b9eu73b0u5febu901fu3001u7a33u5b9au7684u90e8u7f72u548cu6269u5c55u3002
-        </p>
-        <div>
-          <Link to="/about" className="btn">u4e86u89e3u66f4u591a</Link>
-          <a href="https://github.com" className="btn" target="_blank" rel="noopener noreferrer">u67e5u770bu4ee3u7801</a>
+    <>
+      {/* Scanlines effect overlay */}
+      <div className="scanlines"></div>
+      
+      <div className={`landing-page ${loaded ? 'loaded' : ''}`}>
+        <div className="container">
+          <div className="hero-content">
+            <h1 className="glitch-title" data-text={title}>{title}</h1>
+            <p className="subtitle">
+              欢迎来到未来科技前沿 - 突破次元的数字体验
+            </p>
+            
+            <div className="btn-container">
+              <Link to="/about" className="btn btn-primary">探索未来</Link>
+              <a href="https://github.com" className="btn btn-secondary" target="_blank" rel="noopener noreferrer">查看源码</a>
+            </div>
+          </div>
+          
+          <div className="feature-grid">
+            <div className="feature-card">
+              <div className="feature-icon">⚡</div>
+              <h3 className="feature-title">高性能架构</h3>
+              <p className="feature-text">
+                采用最新React 18技术栈，结合Docker容器化部署，提供极致的用户体验和卓越的性能表现。
+              </p>
+            </div>
+            
+            <div className="feature-card">
+              <div className="feature-icon">🔮</div>
+              <h3 className="feature-title">未来设计</h3>
+              <p className="feature-text">
+                融合赛博朋克美学与前沿UI设计，打造沉浸式数字界面，引领视觉革命。
+              </p>
+            </div>
+            
+            <div className="feature-card">
+              <div className="feature-icon">🛡️</div>
+              <h3 className="feature-title">安全可靠</h3>
+              <p className="feature-text">
+                采用先进的安全架构和可靠的技术方案，确保系统稳定运行和数据安全。
+              </p>
+            </div>
+          </div>
+          
+          <div className="cta-section">
+            <h2 className="glitch-title" data-text="JOIN US">JOIN US</h2>
+            <p className="subtitle">
+              加入我们，共同探索数字世界的无限可能
+            </p>
+            <div className="btn-container">
+              <Link to="/about" className="btn btn-primary">立即加入</Link>
+              <Link to="/about" className="btn btn-secondary">了解更多</Link>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
