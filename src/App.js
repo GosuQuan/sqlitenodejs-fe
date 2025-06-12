@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import './App.css';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
+import TetrisPage from './pages/TetrisPage';
 
 // ScrollToTop component to ensure page scrolls to top on route change
 function ScrollToTop() {
@@ -32,6 +33,7 @@ function App() {
               <div className={`nav-links ${menuOpen ? 'active' : ''}`}>
                 <Link to="/" className="nav-link" onClick={() => setMenuOpen(false)}>首页</Link>
                 <Link to="/about" className="nav-link" onClick={() => setMenuOpen(false)}>关于我们</Link>
+                <Link to="/tetris" className="nav-link" onClick={() => setMenuOpen(false)}>俄罗斯方块</Link>
               </div>
               <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
                 <div className={`hamburger ${menuOpen ? 'active' : ''}`}>
@@ -48,6 +50,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/tetris" element={<TetrisPage />} />
           </Routes>
         </main>
 
@@ -61,6 +64,7 @@ function App() {
               <div className="footer-links">
                 <Link to="/" className="footer-link">首页</Link>
                 <Link to="/about" className="footer-link">关于我们</Link>
+                <Link to="/tetris" className="footer-link">俄罗斯方块</Link>
                 <a href="https://github.com" className="footer-link" target="_blank" rel="noopener noreferrer">GitHub</a>
               </div>
             </div>

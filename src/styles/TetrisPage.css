@@ -1,0 +1,20 @@
+.tetris-page {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.tetris-page .instructions {
+  max-width: 400px;
+  margin: 0 auto 24px;
+  text-align: left;
+  color: #ccc;
+}
+
+.tetris-page .instructions h2 {
+  margin-bottom: 8px;
+}
+
+.tetris-page .instructions ul {
+  list-style: disc;
+  margin-left: 20px;
+}

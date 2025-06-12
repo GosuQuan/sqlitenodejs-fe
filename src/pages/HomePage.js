@@ -59,6 +59,10 @@ function HomePage() {
             </div>
           </div>
           
+          <div className="tetris-entry" style={{ textAlign: 'center', margin: '32px 0' }}>
+            <Link to="/tetris" className="btn btn-secondary">🎮 玩俄罗斯方块</Link>
+          </div>
+          
           <div className="cta-section">
             <h2 className="glitch-title" data-text="JOIN US">JOIN US</h2>
             <p className="subtitle">
