@@ -1,0 +1,20 @@
+.snake-page {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.snake-page .instructions {
+  max-width: 400px;
+  margin: 0 auto 24px;
+  text-align: left;
+  color: #ccc;
+}
+
+.snake-page .instructions h2 {
+  margin-bottom: 8px;
+}
+
+.snake-page .instructions ul {
+  list-style: disc;
+  margin-left: 20px;
+}

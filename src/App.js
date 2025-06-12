@@ -4,6 +4,7 @@ import './App.css';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import TetrisPage from './pages/TetrisPage';
+import SnakePage from './pages/SnakePage';
 
 // ScrollToTop component to ensure page scrolls to top on route change
 function ScrollToTop() {
@@ -34,6 +35,7 @@ function App() {
                 <Link to="/" className="nav-link" onClick={() => setMenuOpen(false)}>首页</Link>
                 <Link to="/about" className="nav-link" onClick={() => setMenuOpen(false)}>关于我们</Link>
                 <Link to="/tetris" className="nav-link" onClick={() => setMenuOpen(false)}>俄罗斯方块</Link>
+                <Link to="/snake" className="nav-link" onClick={() => setMenuOpen(false)}>贪吃蛇</Link>
               </div>
               <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
                 <div className={`hamburger ${menuOpen ? 'active' : ''}`}>
@@ -51,6 +53,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/tetris" element={<TetrisPage />} />
+            <Route path="/snake" element={<SnakePage />} />
           </Routes>
         </main>
 
@@ -65,6 +68,7 @@ function App() {
                 <Link to="/" className="footer-link">首页</Link>
                 <Link to="/about" className="footer-link">关于我们</Link>
                 <Link to="/tetris" className="footer-link">俄罗斯方块</Link>
+                <Link to="/snake" className="footer-link">贪吃蛇</Link>
                 <a href="https://github.com" className="footer-link" target="_blank" rel="noopener noreferrer">GitHub</a>
               </div>
             </div>
