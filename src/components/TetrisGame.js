@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import './TetrisGame.css';
 
 const COLS = 10;
@@ -68,7 +68,7 @@ export default function TetrisGame() {
   }, [board, current]);
 
   // Collision detection helper
-  const hasCollision = (tetro, nextRow, nextCol) => {
+  const hasCollision = useCallback((tetro, nextRow, nextCol) => {
     return tetro.blocks.some(([r, c]) => {
       const row = nextRow + r;
       const col = nextCol + c;
@@ -80,10 +80,10 @@ export default function TetrisGame() {
         board[row][col]
       );
     });
-  };
+  }, [board]);
 
   // Lock tetromino into board and clear lines
-  const mergeAndSweep = (tetro) => {
+  const mergeAndSweep = useCallback((tetro) => {
     const newBoard = board.map((row) => [...row]);
     tetro.blocks.forEach(([r, c]) => {
       const row = tetro.row + r;
@@ -103,7 +103,7 @@ export default function TetrisGame() {
     }
     if (cleared) setScore((s) => s + cleared * 100);
     setBoard(newBoard);
-  };
+  }, [board]);
 
   // Move tetromino down periodically
   useEffect(() => {
@@ -125,7 +125,7 @@ export default function TetrisGame() {
       });
     }, 500);
     return () => clearInterval(interval);
-  }, [board, gameOver]);
+  }, [board, gameOver, hasCollision, mergeAndSweep]);
 
   // Keyboard controls
   useEffect(() => {
@@ -156,7 +156,7 @@ export default function TetrisGame() {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [current, gameOver]);
+  }, [current, gameOver, hasCollision]);
 
   const handleRestart = () => {
     setBoard(createBoard());
